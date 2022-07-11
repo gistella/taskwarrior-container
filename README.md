@@ -28,8 +28,40 @@ $ mkdir -p ${VOLUME}
 $ podman run --rm -ti -v ${VOLUME}:/taskwarrior:Z taskwarrior
 ```
 
-Here's an alias for convenience:
+Note for your tasks to be persisted, you will have to change the
+`data.location` to somewhere in a volume, e.g.:
 
 ```
-alias task='podman run --rm -ti -v ${VOLUME}:/taskwarrior:Z taskwarrior:latest'
+$ task config data.location /taskwarrior/task
+```
+
+`man` is installed within the container and the man pages for TaskWarrior are
+copied from the build image.
+
+Here are two aliases for convenience:
+
+```
+$ alias task='podman run --rm -ti -v ${VOLUME}:/taskwarrior:Z taskwarrior:latest'
+$ alias mtask='podman run --rm -ti -v ${VOLUME}:/taskwarrior:Z --entrypoint man taskwarrior:latest'
+```
+
+This way, you can add a task as you would outside a container:
+
+```
+$ task add Buy milk
+Created task 1.
+```
+
+Note: when the `.taskrc` location is overridden, a header appears in every
+command output. To avoid having the header show up, change the `verbose`
+configuration accordingly, e.g.:
+
+```
+$ task config verbose 0
+```
+
+For further detail, refer to the `taskrc(5)` man page:
+
+```
+$ mtask taskrc
 ```

@@ -27,8 +27,14 @@ RUN tar xzf task-${TW_RELEASE}.tar.gz && \
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.6
 
+ARG TW_RELEASE=2.6.2
+
 VOLUME /taskwarrior
 
 COPY --from=builder /usr/local/bin/task /usr/local/bin/task
+COPY --from=builder task-${TW_RELEASE}/doc/man/*.1 /usr/local/share/man/man1/
+COPY --from=builder task-${TW_RELEASE}/doc/man/*.5 /usr/local/share/man/man5/
+
+RUN microdnf install man && mandb
 
 ENTRYPOINT ["/usr/local/bin/task", "rc:/taskwarrior/.taskrc"]
